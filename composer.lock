@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c1ea0abb4388c64713f8062c3404157",
+    "content-hash": "10af3e7732181048533787fee451e753",
     "packages": [
         {
             "name": "nadar/prosemirror-json-parser",
-            "version": "dev-main",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nadar/prosemirror-json-parser.git",
-                "reference": "75c4a8d6ba14d87f4e205f0528e4aa71ae75bed9"
+                "reference": "278b96ccb0c6df80090e1afde0e9388593ae8463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nadar/prosemirror-json-parser/zipball/75c4a8d6ba14d87f4e205f0528e4aa71ae75bed9",
-                "reference": "75c4a8d6ba14d87f4e205f0528e4aa71ae75bed9",
+                "url": "https://api.github.com/repos/nadar/prosemirror-json-parser/zipball/278b96ccb0c6df80090e1afde0e9388593ae8463",
+                "reference": "278b96ccb0c6df80090e1afde0e9388593ae8463",
                 "shasum": ""
             },
             "require-dev": {
@@ -26,7 +26,6 @@
                 "phpunit/phpunit": "^10",
                 "rector/rector": "^0.14.2"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -46,9 +45,9 @@
             "description": "A library to parse prosemirror / TipTap Json into HTML with custom elements and highly extendible",
             "support": {
                 "issues": "https://github.com/nadar/prosemirror-json-parser/issues",
-                "source": "https://github.com/nadar/prosemirror-json-parser/tree/main"
+                "source": "https://github.com/nadar/prosemirror-json-parser/tree/1.0.0"
             },
-            "time": "2023-11-27T09:51:57+00:00"
+            "time": "2023-12-05T13:50:12+00:00"
         }
     ],
     "packages-dev": [
@@ -601,16 +600,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.1",
+            "version": "10.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d5d9dca6a902d05b34c4bcbc7c1636ce1dc25408"
+                "reference": "5aedff46afba98dddecaa12349ec044d9103d4fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d5d9dca6a902d05b34c4bcbc7c1636ce1dc25408",
-                "reference": "d5d9dca6a902d05b34c4bcbc7c1636ce1dc25408",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5aedff46afba98dddecaa12349ec044d9103d4fe",
+                "reference": "5aedff46afba98dddecaa12349ec044d9103d4fe",
                 "shasum": ""
             },
             "require": {
@@ -682,7 +681,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.2"
             },
             "funding": [
                 {
@@ -698,7 +697,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-01T16:57:05+00:00"
+            "time": "2023-12-05T14:54:33+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1668,9 +1667,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "nadar/prosemirror-json-parser": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
