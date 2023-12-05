@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "nadar/prosemirror-json-parser",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nadar/prosemirror-json-parser.git",
-                "reference": "278b96ccb0c6df80090e1afde0e9388593ae8463"
+                "reference": "b8bfe5927a23efe0ae11b3e7a57bf387b7cbc274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nadar/prosemirror-json-parser/zipball/278b96ccb0c6df80090e1afde0e9388593ae8463",
-                "reference": "278b96ccb0c6df80090e1afde0e9388593ae8463",
+                "url": "https://api.github.com/repos/nadar/prosemirror-json-parser/zipball/b8bfe5927a23efe0ae11b3e7a57bf387b7cbc274",
+                "reference": "b8bfe5927a23efe0ae11b3e7a57bf387b7cbc274",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,12 +42,12 @@
                     "email": "git@nadar.io"
                 }
             ],
-            "description": "A library to parse prosemirror / TipTap Json into HTML with custom elements and highly extendible",
+            "description": "A library that easily converts ProseMirror/TipTap JSON into customizable HTML elements.",
             "support": {
                 "issues": "https://github.com/nadar/prosemirror-json-parser/issues",
-                "source": "https://github.com/nadar/prosemirror-json-parser/tree/1.0.0"
+                "source": "https://github.com/nadar/prosemirror-json-parser/tree/1.1.0"
             },
-            "time": "2023-12-05T13:50:12+00:00"
+            "time": "2023-12-05T19:10:55+00:00"
         }
     ],
     "packages-dev": [
