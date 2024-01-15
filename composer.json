@@ -19,7 +19,13 @@
             "email": "git@nadar.io"
         }
     ],
+    "config": {
+        "platform": {
+            "php": "8.1"
+        }
+    },
     "require": {
+        "php": "^8.1",
         "nadar/prosemirror-json-parser": "^1.0"
     },
     "require-dev": {
