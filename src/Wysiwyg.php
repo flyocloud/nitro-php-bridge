@@ -10,9 +10,9 @@ use Nadar\ProseMirror\Parser;
  * ```php
  * $html = Wysiwyg::render($json);
  * ```
- * 
+ *
  * or for further customization:
- * 
+ *
  * ```php
  * $html = Wyswyg::render($json, function(Wysiwyg $parser) {
  *    $parser
@@ -23,12 +23,12 @@ use Nadar\ProseMirror\Parser;
  */
 class Wysiwyg extends Parser
 {
-    public static function render(mixed $json, callable $parser = null) : string
+    public static function render(mixed $json, callable $parser = null): string
     {
-        $object = new self;
+        $object = new self();
 
         if (is_object($json)) {
-            $json = json_decode(json_encode($json), true);
+            $json = json_decode(json_encode($json, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
         }
 
         if (is_callable($parser)) {

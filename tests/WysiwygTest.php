@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Flyo\Bridge\Tests;
 
@@ -15,7 +17,7 @@ class WysiwygTest extends TestCase
         $buff = file_get_contents($path);
         $json = json_decode($buff, true);
 
-        $content = Wysiwyg::render($json, function(Wysiwyg $parser) {
+        $content = Wysiwyg::render($json, function (Wysiwyg $parser) {
             $parser
                 ->replaceNode(Types::image, fn (Node $node) => "<img class=\"w-full\" src=\"{$node->getAttr('src')}\" alt=\"{$node->getAttr('alt')}\">")
                 ->addNode('accordion', fn (Node $node) => "<span>{$node->getAttr('title')}</span>");
