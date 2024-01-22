@@ -55,9 +55,13 @@ class Image
         return implode(" ", $attributes);
     }
 
-    public static function tag($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async')
+    public static function tag($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = [])
     {
         $attributes = self::attributes($src, $alt, $width, $height, $format, $loading, $decoding);
+
+        foreach ($options as $key => $value) {
+            $attributes .= sprintf(' %s="%s"', $key, $value);
+        }
         return sprintf('<img %s />', $attributes);
     }
 

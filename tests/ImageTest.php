@@ -24,6 +24,13 @@ class ImageTest extends TestCase
         $this->assertEquals('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x200?format=png" alt="Test Image" loading="eager" decoding="sync" width="100" height="200" />', $tag);
     }
 
+    public function testImageOptions()
+    {
+        $tag = Image::tag('test.jpg', 'Test Image', 100, 200, 'png', 'auto', 'sync', ['class' => 'img-fluid', 'foo' => 1]);
+
+        $this->assertEquals('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x200?format=png" alt="Test Image" loading="eager" decoding="sync" width="100" height="200" class="img-fluid" foo="1" />', $tag);
+    }
+
     /*
     public function testGetSrc()
     {
