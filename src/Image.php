@@ -33,7 +33,7 @@ class Image
     ) {
     }
 
-    public static function attributes($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async')
+    public static function attributes($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
     {
         $image = new Image($src, $alt, $width, $height, $format, $loading, $decoding);
 
@@ -55,7 +55,7 @@ class Image
         return implode(" ", $attributes);
     }
 
-    public static function tag($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = [])
+    public static function tag($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = []): string
     {
         $attributes = self::attributes($src, $alt, $width, $height, $format, $loading, $decoding);
 
@@ -63,6 +63,12 @@ class Image
             $attributes .= sprintf(' %s="%s"', $key, $value);
         }
         return sprintf('<img %s />', $attributes);
+    }
+
+    public static function source($src, $width = null, $height = null, $format = 'webp'): string
+    {
+        $image = new Image($src, '', $width, $height, $format);
+        return $image->getSrc();
     }
 
     /**
@@ -125,6 +131,12 @@ class Image
             $width ??= 'null';
             $height ??= 'null';
             $url .= sprintf('/thumb/%sx%s', $width, $height);
+        }
+
+        // if the original file name is already in the requested format, we don't add the format to the url.
+        $orginalFormat = pathinfo($url, PATHINFO_EXTENSION) ?: '';
+        if ($orginalFormat == $this->getFormat()) {
+            return $url;
         }
 
         return $url . "?format=" . $this->getFormat();
