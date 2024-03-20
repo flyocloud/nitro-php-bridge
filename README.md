@@ -5,7 +5,7 @@ This is can be used in backend projects to make the bridge between Flyo Cloud an
 ## Installation
 
 ```sh
-composer require flyo-nitro/php-bridge
+composer require flyo/nitro-php-bridge
 ```
 
 ## Usage
