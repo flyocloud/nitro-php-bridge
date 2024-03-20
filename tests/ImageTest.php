@@ -36,6 +36,13 @@ class ImageTest extends TestCase
         $this->assertSame('<img src="https://storage.flyo.cloud/foo.jpg?format=webp" alt="&lt;h1&gt;hoi&lt;/h1&gt;" loading="lazy" decoding="async" />', Image::tag('foo.jpg', '<h1>hoi</h1>'));
     }
 
+    public function testSourceOnly()
+    {
+        $this->assertSame('https://storage.flyo.cloud/foobar.jpg/thumb/200x200?format=webp', Image::source('foobar.jpg', 200, 200));
+        $this->assertSame('https://storage.flyo.cloud/foobar.jpg?format=webp', Image::source('foobar.jpg'));
+        $this->assertSame('https://storage.flyo.cloud/foobar.jpg', Image::source('foobar.jpg', null, null, 'jpg'));
+    }
+
     /*
     public function testGetSrc()
     {
