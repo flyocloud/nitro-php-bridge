@@ -31,11 +31,21 @@ class Responsive
 
     public function getSrcset(Image $image): string
     {
+        $originalWidth = $image->getWidth();
+        $hasLargeImage = false;
+        $fallback = $image->getSrc() . ' ' . $originalWidth . 'w';
         $srcset = [];
         foreach ($this->_srcset as $src) {
             /** @var BreakpointType $type */
             $type = $src[1];
             $srcset[] = $type->srcset($src[0], $image->setWidth($src[2])->setHeight($src[3])->getSrc());
+
+            if ($src[2] > $originalWidth) {
+                $hasLargeImage = true;
+            }
+        }
+        if (!$hasLargeImage) {
+            $srcset[] = $fallback;
         }
         return implode(", ", $srcset);
     }
