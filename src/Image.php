@@ -18,6 +18,10 @@ namespace Flyo\Bridge;
  * <img <?= Image::attributes('test.jpg', 'Test Image', 300, 300); ?> />
  * ```
  *
+ * Responsive Images generator:
+ *
+ * <?= Image::tag((new Responsive('test.jpg'))->add(500, Responsive::PX_OR_LESS, 500, 500)->add(1000, Responsive::PX_OR_MORE, 1000, 1000)); ?>
+ *
  * @see https://dev.flyo.cloud/dev/infos/images
  */
 class Image
@@ -33,9 +37,15 @@ class Image
     ) {
     }
 
-    public static function attributes($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
+    public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
     {
-        $image = new Image($src, $alt, $width, $height, $format, $loading, $decoding);
+        if ($src instanceof Responsive) {
+            $targetSrc = $src->src;
+        } else {
+            $targetSrc = $src;
+        }
+
+        $image = new Image($targetSrc, $alt, $width, $height, $format, $loading, $decoding);
 
         $attributes = [
             sprintf('src="%s"', $image->getSrc()),
@@ -52,10 +62,15 @@ class Image
             $attributes[] = sprintf('height="%s"', $image->getHeight());
         }
 
+        if ($src instanceof Responsive) {
+            $attributes[] = sprintf('srcset="%s"', $src->getSrcset($image));
+            $attributes[] = sprintf('sizes="%s"', $src->getSizes());
+        }
+
         return implode(" ", $attributes);
     }
 
-    public static function tag($src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = []): string
+    public static function tag(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = []): string
     {
         $attributes = self::attributes($src, $alt, $width, $height, $format, $loading, $decoding);
 
@@ -65,7 +80,7 @@ class Image
         return sprintf('<img %s />', $attributes);
     }
 
-    public static function source($src, $width = null, $height = null, $format = 'webp'): string
+    public static function source(string $src, $width = null, $height = null, $format = 'webp'): string
     {
         $image = new Image($src, '', $width, $height, $format);
         return $image->getSrc();
@@ -109,7 +124,7 @@ class Image
         return htmlspecialchars($this->alt, ENT_QUOTES);
     }
 
-    public function getwidth(): ?int
+    public function getWidth(): ?int
     {
         return empty($this->width) ? null : (int) $this->width;
     }
@@ -119,12 +134,24 @@ class Image
         return empty($this->height) ? null : (int) $this->height;
     }
 
+    public function setWidth($width): self
+    {
+        $this->width = $width;
+        return $this;
+    }
+
+    public function setHeight($height): self
+    {
+        $this->height = $height;
+        return $this;
+    }
+
     public function getSrc(): string
     {
         $url = str_contains($this->src, 'https://storage.flyo.cloud') ? $this->src : 'https://storage.flyo.cloud/' . $this->src;
 
         // If either width or height are defined, we add the /thumb/$widthx$height path to it.
-        $width = $this->getwidth();
+        $width = $this->getWidth();
         $height = $this->getHeight();
 
         if ($width !== null || $height !== null) {
