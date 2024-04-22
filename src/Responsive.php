@@ -31,14 +31,15 @@ class Responsive
 
     public function getSrcset(Image $image): string
     {
-        $originalWidth = $image->getWidth();
+        $img = clone $image;
+        $originalWidth = $img->getWidth();
         $hasLargeImage = false;
-        $fallback = $image->getSrc() . ' ' . $originalWidth . 'w';
+        $fallback = $img->getSrc() . ' ' . $originalWidth . 'w';
         $srcset = [];
         foreach ($this->_srcset as $src) {
             /** @var BreakpointType $type */
             $type = $src[1];
-            $srcset[] = $type->srcset($src[0], $image->setWidth($src[2])->setHeight($src[3])->getSrc());
+            $srcset[] = $type->srcset($src[0], $img->setWidth($src[2])->setHeight($src[3])->getSrc());
 
             if ($src[2] > $originalWidth) {
                 $hasLargeImage = true;
@@ -50,13 +51,20 @@ class Responsive
         return implode(", ", $srcset);
     }
 
-    public function getSizes(): string
+    public function getSizes(Image $image): string
     {
+        $maxSize = $image->getWidth();
+        foreach ($this->_srcset as $src) {
+            if ($src[2] > $maxSize) {
+                $maxSize = $src[2];
+            }
+        }
+
         $sizes = [];
         foreach ($this->_srcset as $src) {
             /** @var BreakpointType $type */
             $type = $src[1];
-            $sizes[] = $type->size($src[0]);
+            $sizes[] = $type->size($src[0], $maxSize);
         }
         $sizes[] = '100vw';
         return implode(", ", $sizes);

@@ -64,7 +64,7 @@ class Image
 
         if ($src instanceof Responsive) {
             $attributes[] = sprintf('srcset="%s"', $src->getSrcset($image));
-            $attributes[] = sprintf('sizes="%s"', $src->getSizes());
+            $attributes[] = sprintf('sizes="%s"', $src->getSizes($image));
         }
 
         return implode(" ", $attributes);

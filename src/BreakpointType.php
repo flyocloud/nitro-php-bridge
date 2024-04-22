@@ -13,10 +13,10 @@ enum BreakpointType
         return "{$src} {$screenSize}w";
     }
 
-    public function size(int $screenSize): string
+    public function size(int $screenSize, int $maxWidth): string
     {
-        $width = $this->width();
-        return "($width: {$screenSize}px) {$screenSize}px";
+        $vw = floor(($screenSize / $maxWidth) * 100);
+        return "({$this->width()}: {$screenSize}px) {$vw}vw";
     }
 
     public function width(): string
