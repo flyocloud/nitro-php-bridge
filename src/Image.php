@@ -22,6 +22,8 @@ namespace Flyo\Bridge;
  *
  * <?= Image::tag((new Responsive('test.jpg'))->add(500, Responsive::PX_OR_LESS, 500, 500)->add(1000, Responsive::PX_OR_MORE, 1000, 1000)); ?>
  *
+ * > Absolute paths starting with http/https or / won't be modified!
+ *
  * @see https://dev.flyo.cloud/dev/infos/images
  */
 class Image
@@ -148,6 +150,15 @@ class Image
 
     public function getSrc(): string
     {
+        // If the URL starts with 'http://' or 'https://' and is not from 'storage.flyo.cloud', return it directly
+        if (preg_match('/^https?:\/\//', $this->src) && !str_contains($this->src, 'storage.flyo.cloud')) {
+            return $this->src;
+        }
+
+        if (str_starts_with($this->src, '/')) {
+            return $this->src;
+        }
+
         $url = str_contains($this->src, 'https://storage.flyo.cloud') ? $this->src : 'https://storage.flyo.cloud/' . $this->src;
 
         // If either width or height are defined, we add the /thumb/$widthx$height path to it.

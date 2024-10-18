@@ -43,6 +43,15 @@ class ImageTest extends TestCase
         $this->assertSame('https://storage.flyo.cloud/foobar.jpg', Image::source('foobar.jpg', null, null, 'jpg'));
     }
 
+    public function testExternalOtherSource()
+    {
+        $this->assertSame('https://example.com/foobar.jpg', Image::source('https://example.com/foobar.jpg', 400, 400));
+        $this->assertSame('http://localhost:8080/foobar.jpg', Image::source('http://localhost:8080/foobar.jpg', 400, 400));
+        $this->assertSame('https://storage.flyo.cloud/foobar.jpg/thumb/400x400?format=webp', Image::source('https://storage.flyo.cloud/foobar.jpg', 400, 400));
+        $this->assertSame('https://storage.flyo.cloud/foobar.jpg/thumb/400x400?format=webp', Image::source('foobar.jpg', 400, 400));
+        $this->assertSame('/foobar.jpg', Image::source('/foobar.jpg', 400, 400));
+    }
+
     /*
     public function testGetSrc()
     {
