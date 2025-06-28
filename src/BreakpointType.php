@@ -10,13 +10,13 @@ enum BreakpointType
 
     public function srcset(int $screenSize, string $src): string
     {
-        return "{$src} {$screenSize}w";
+        return sprintf('%s %dw', $src, $screenSize);
     }
 
     public function size(int $screenSize, int $maxWidth): string
     {
         $vw = floor(($screenSize / $maxWidth) * 100);
-        return "({$this->width()}: {$screenSize}px) {$vw}vw";
+        return sprintf('(%s: %dpx) %svw', $this->width(), $screenSize, $vw);
     }
 
     public function width(): string

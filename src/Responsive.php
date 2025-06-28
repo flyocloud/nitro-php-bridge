@@ -12,11 +12,17 @@ namespace Flyo\Bridge;
  */
 class Responsive
 {
-    public const PX_OR_LESS = 'max-width';
+    /**
+     * @var string
+     */
+    final public const PX_OR_LESS = 'max-width';
 
-    public const PX_OR_MORE = 'min-width';
+    /**
+     * @var string
+     */
+    final public const PX_OR_MORE = 'min-width';
 
-    private $_srcset = [];
+    private array $_srcset = [];
 
     public function __construct(public string $src)
     {
@@ -45,9 +51,11 @@ class Responsive
                 $hasLargeImage = true;
             }
         }
+
         if (!$hasLargeImage) {
             $srcset[] = $fallback;
         }
+
         return implode(", ", $srcset);
     }
 
@@ -66,6 +74,7 @@ class Responsive
             $type = $src[1];
             $sizes[] = $type->size($src[0], $maxSize);
         }
+
         $sizes[] = '100vw';
         return implode(", ", $sizes);
     }

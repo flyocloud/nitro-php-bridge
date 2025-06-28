@@ -29,7 +29,7 @@ namespace Flyo\Bridge;
 class Image
 {
     public function __construct(
-        protected string $src,
+        protected string|Responsive $src,
         protected string $alt,
         protected ?int $width = null,
         protected ?int $height = null,
@@ -39,34 +39,46 @@ class Image
     ) {
     }
 
+    public static function fromObject(object $image, int $width, int $height, ?string $alt = null): self
+    {
+        if (!property_exists($image, 'source') || empty($image->source)) {
+            throw new \InvalidArgumentException('Image object must have a non-empty "source" property.');
+        }
+
+        return new self(
+            $image->source,
+            (property_exists($image, 'caption') && !empty($image->caption)) ? $image->caption : $alt,
+            $width,
+            $height
+        );
+    }
+
     public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
     {
-        if ($src instanceof Responsive) {
-            $targetSrc = $src->src;
-        } else {
-            $targetSrc = $src;
-        }
 
-        $image = new Image($targetSrc, $alt, $width, $height, $format, $loading, $decoding);
+        return (new self($src, $alt, $width, $height, $format, $loading, $decoding))->toAttributes();
+    }
 
+    public function toAttributes(): string
+    {
         $attributes = [
-            sprintf('src="%s"', $image->getSrc()),
-            sprintf('alt="%s"', $image->getAlt()),
-            sprintf('loading="%s"', $image->getLoading()),
-            sprintf('decoding="%s"', $image->getDecoding()),
+            sprintf('src="%s"', $this->getSrc()),
+            sprintf('alt="%s"', $this->getAlt()),
+            sprintf('loading="%s"', $this->getLoading()),
+            sprintf('decoding="%s"', $this->getDecoding()),
         ];
 
-        if ($image->getwidth()) {
-            $attributes[] = sprintf('width="%s"', $image->getwidth());
+        if ($this->getwidth()) {
+            $attributes[] = sprintf('width="%s"', $this->getwidth());
         }
 
-        if ($image->getHeight()) {
-            $attributes[] = sprintf('height="%s"', $image->getHeight());
+        if ($this->getHeight()) {
+            $attributes[] = sprintf('height="%s"', $this->getHeight());
         }
 
-        if ($src instanceof Responsive) {
-            $attributes[] = sprintf('srcset="%s"', $src->getSrcset($image));
-            $attributes[] = sprintf('sizes="%s"', $src->getSizes($image));
+        if ($this->src instanceof Responsive) {
+            $attributes[] = sprintf('srcset="%s"', $this->src->getSrcset($this));
+            $attributes[] = sprintf('sizes="%s"', $this->src->getSizes($this));
         }
 
         return implode(" ", $attributes);
@@ -79,6 +91,18 @@ class Image
         foreach ($options as $key => $value) {
             $attributes .= sprintf(' %s="%s"', $key, $value);
         }
+
+        return sprintf('<img %s />', $attributes);
+    }
+
+    public function toTag(array $options = []): string
+    {
+        $attributes = $this->toAttributes();
+
+        foreach ($options as $key => $value) {
+            $attributes .= sprintf(' %s="%s"', $key, $value);
+        }
+
         return sprintf('<img %s />', $attributes);
     }
 
@@ -150,16 +174,17 @@ class Image
 
     public function getSrc(): string
     {
+        $src = $this->src instanceof Responsive ? $this->src->src : $this->src;
         // If the URL starts with 'http://' or 'https://' and is not from 'storage.flyo.cloud', return it directly
-        if (preg_match('/^https?:\/\//', $this->src) && !str_contains($this->src, 'storage.flyo.cloud')) {
-            return $this->src;
+        if (preg_match('#^https?:\/\/#', $src) && !str_contains($this->src, 'storage.flyo.cloud')) {
+            return $src;
         }
 
-        if (str_starts_with($this->src, '/')) {
-            return $this->src;
+        if (str_starts_with($src, '/')) {
+            return $src;
         }
 
-        $url = str_contains($this->src, 'https://storage.flyo.cloud') ? $this->src : 'https://storage.flyo.cloud/' . $this->src;
+        $url = str_contains($src, 'https://storage.flyo.cloud') ? $src : 'https://storage.flyo.cloud/' . $src;
 
         // If either width or height are defined, we add the /thumb/$widthx$height path to it.
         $width = $this->getWidth();
@@ -173,7 +198,7 @@ class Image
 
         // if the original file name is already in the requested format, we don't add the format to the url.
         $orginalFormat = pathinfo($url, PATHINFO_EXTENSION) ?: '';
-        if ($orginalFormat == $this->getFormat()) {
+        if ($orginalFormat === $this->getFormat()) {
             return $url;
         }
 

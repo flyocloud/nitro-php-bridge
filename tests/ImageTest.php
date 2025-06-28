@@ -52,6 +52,29 @@ class ImageTest extends TestCase
         $this->assertSame('/foobar.jpg', Image::source('/foobar.jpg', 400, 400));
     }
 
+    public function testFromObject()
+    {
+        $image = Image::fromObject((object)[
+            'source' => 'test.jpg',
+            'caption' => 'Test Image',
+        ], 100, 100);
+
+        $this->assertSame('https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp', $image->getSrc());
+        $this->assertSame('src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="Test Image" loading="lazy" decoding="async" width="100" height="100"', $image->toAttributes());
+        $this->assertSame('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="Test Image" loading="lazy" decoding="async" width="100" height="100" />', $image->toTag());
+    }
+
+    public function testFromCaptionButOwnAltTag()
+    {
+        $image = Image::fromObject((object)[
+            'source' => 'test.jpg',
+        ], 100, 100, 'Own Alt Tag');
+
+        $this->assertSame('https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp', $image->getSrc());
+        $this->assertSame('src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="Own Alt Tag" loading="lazy" decoding="async" width="100" height="100"', $image->toAttributes());
+        $this->assertSame('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="Own Alt Tag" loading="lazy" decoding="async" width="100" height="100" />', $image->toTag());
+    }
+
     /*
     public function testGetSrc()
     {
