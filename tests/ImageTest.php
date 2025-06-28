@@ -75,6 +75,16 @@ class ImageTest extends TestCase
         $this->assertSame('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="Own Alt Tag" loading="lazy" decoding="async" width="100" height="100" />', $image->toTag());
     }
 
+    public function testFromCaptionButOwnAltTagWithEncoding()
+    {
+        $image = Image::fromObject((object)[
+            'source' => 'test.jpg',
+        ], 100, 100, '"Test Encoding"');
+
+        $this->assertSame('&quot;Test Encoding&quot;', $image->getAlt());
+        $this->assertSame('<img src="https://storage.flyo.cloud/test.jpg/thumb/100x100?format=webp" alt="&quot;Test Encoding&quot;" loading="lazy" decoding="async" width="100" height="100" />', $image->toTag());
+    }
+
     /*
     public function testGetSrc()
     {
