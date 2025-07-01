@@ -176,7 +176,7 @@ class Image
     {
         $src = $this->src instanceof Responsive ? $this->src->src : $this->src;
         // If the URL starts with 'http://' or 'https://' and is not from 'storage.flyo.cloud', return it directly
-        if (preg_match('#^https?:\/\/#', $src) && !str_contains($this->src, 'storage.flyo.cloud')) {
+        if (preg_match('#^https?:\/\/#', $src) && !str_contains($src, 'storage.flyo.cloud')) {
             return $src;
         }
 
