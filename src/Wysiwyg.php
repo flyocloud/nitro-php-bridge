@@ -2,6 +2,8 @@
 
 namespace Flyo\Bridge;
 
+use Nadar\ProseMirror\Mark;
+use Nadar\ProseMirror\MarkType;
 use Nadar\ProseMirror\Node;
 use Nadar\ProseMirror\NodeType;
 use Nadar\ProseMirror\Parser;
@@ -16,15 +18,23 @@ use Nadar\ProseMirror\Parser;
  * or for further customization:
  *
  * ```php
- * $html = Wyswyg::render($json, function(Wysiwyg $parser) {
+ * $html = Wysiwyg::render($json, function(Wysiwyg $parser) {
  *    $parser
  *      ->replaceNode(NodeType::image, fn (Node $node) => "<img class=\"w-full\" src=\"{$node->getAttr('src')}\" alt=\"{$node->getAttr('alt')}\">")
- *      ->addNode('box', fn (Node $node) => "<span class=\"font-semibold mx-6 my-3 text-left flex-auto\">".nl2br($node->getAttr('text'))."</span>");
+ *      ->addNode('box', fn (Node $node) => "<span class=\"font-semibold mx-6 my-3 text-left flex-auto\">".nl2br($node->getAttr('text'))."</span>")
+ *      ->replaceMark(MarkType::bold, fn (Mark $mark, string $text) => "<span class=\"font-bold\">{$text}</span>");
  * });
  * ```
  */
 class Wysiwyg extends Parser
 {
+    /**
+     * Render the JSON to HTML.
+     *
+     * @param mixed $json
+     * @param callable|null $parser
+     * @return string
+     */
     public static function render(mixed $json, ?callable $parser = null): string
     {
         $object = new self();
