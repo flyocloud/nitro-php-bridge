@@ -3,8 +3,8 @@
 namespace Flyo\Bridge;
 
 use Nadar\ProseMirror\Node;
+use Nadar\ProseMirror\NodeType;
 use Nadar\ProseMirror\Parser;
-use Nadar\ProseMirror\Types;
 
 /**
  * Quick Parser for WYSIWYG
@@ -18,18 +18,18 @@ use Nadar\ProseMirror\Types;
  * ```php
  * $html = Wyswyg::render($json, function(Wysiwyg $parser) {
  *    $parser
- *      ->replaceNode(Types::image, fn (Node $node) => "<img class=\"w-full\" src=\"{$node->getAttr('src')}\" alt=\"{$node->getAttr('alt')}\">")
+ *      ->replaceNode(NodeType::image, fn (Node $node) => "<img class=\"w-full\" src=\"{$node->getAttr('src')}\" alt=\"{$node->getAttr('alt')}\">")
  *      ->addNode('box', fn (Node $node) => "<span class=\"font-semibold mx-6 my-3 text-left flex-auto\">".nl2br($node->getAttr('text'))."</span>");
  * });
  * ```
  */
 class Wysiwyg extends Parser
 {
-    public static function render(mixed $json, callable $parser = null): string
+    public static function render(mixed $json, ?callable $parser = null): string
     {
         $object = new self();
 
-        $object->replaceNode(Types::image, function (Node $node) {
+        $object->replaceNode(NodeType::image, function (Node $node) {
             $src = $node->getAttr('src');
             if (is_array($src) && isset($src['source'])) {
                 $src = $src['source'];
