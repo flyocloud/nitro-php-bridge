@@ -2,7 +2,9 @@
 
 namespace Flyo\Bridge;
 
+use Nadar\ProseMirror\Node;
 use Nadar\ProseMirror\Parser;
+use Nadar\ProseMirror\Types;
 
 /**
  * Quick Parser for WYSIWYG
@@ -26,6 +28,16 @@ class Wysiwyg extends Parser
     public static function render(mixed $json, callable $parser = null): string
     {
         $object = new self();
+
+        $object->replaceNode(Types::image, function (Node $node) {
+            $src = $node->getAttr('src');
+            if (is_array($src) && isset($src['source'])) {
+                $src = $src['source'];
+            } elseif (is_object($src) && isset($src->source)) {
+                $src = $src->source;
+            }
+            return '<img src="' . $src . '" alt="' . $node->getAttr('alt') . '" title="' . $node->getAttr('title') . '" />';
+        });
 
         if (is_object($json)) {
             $json = json_decode(json_encode($json, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
