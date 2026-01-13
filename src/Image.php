@@ -37,17 +37,18 @@ class Image
         protected ?int $height = null,
         protected string $format = 'web',
         protected string $loading = 'lazy',
-        protected string $decoding = 'async'
+        protected string $decoding = 'async',
+        protected string $fetchpriority = 'auto'
     ) {
     }
 
-    public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
+    public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', $fetchpriority = 'auto'): string
     {
 
-        return (new self($src, $alt, $width, $height, $format, $loading, $decoding))->toAttributes();
+        return (new self($src, $alt, $width, $height, $format, $loading, $decoding, $fetchpriority))->toAttributes();
     }
 
-    public static function fromObject(object $image, int $width, int $height, ?string $alt = null, string $format = 'webp', string $loading = 'lazy', string $decoding = 'async'): self
+    public static function fromObject(object $image, int $width, int $height, ?string $alt = null, string $format = 'webp', string $loading = 'lazy', string $decoding = 'async', string $fetchpriority = 'auto'): self
     {
         if (!property_exists($image, 'source') || empty($image->source)) {
             throw new InvalidArgumentException('Image object must have a non-empty "source" property.');
@@ -57,7 +58,11 @@ class Image
             $image->source,
             (property_exists($image, 'caption') && !empty($image->caption)) ? $image->caption : $alt,
             $width,
-            $height
+            $height,
+            $format,
+            $loading,
+            $decoding,
+            $fetchpriority
         );
     }
 
@@ -67,9 +72,9 @@ class Image
         return $image->getSrc();
     }
 
-    public static function tag(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = []): string
+    public static function tag(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = [], $fetchpriority = 'auto'): string
     {
-        $attributes = self::attributes($src, $alt, $width, $height, $format, $loading, $decoding);
+        $attributes = self::attributes($src, $alt, $width, $height, $format, $loading, $decoding, $fetchpriority);
 
         foreach ($options as $key => $value) {
             $attributes .= sprintf(' %s="%s"', $key, $value);
@@ -178,6 +183,26 @@ class Image
         return strtolower($this->loading) === 'lazy' ? 'lazy' : 'eager';
     }
 
+    public function setFetchpriority(string $fetchpriority): self
+    {
+        $this->fetchpriority = $fetchpriority;
+        return $this;
+    }
+
+    /**
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
+     */
+    public function getFetchpriority(): string
+    {
+        $fetchpriority = strtolower($this->fetchpriority);
+
+        if (!in_array($fetchpriority, ['high', 'low', 'auto'])) {
+            $fetchpriority = 'auto';
+        }
+
+        return $fetchpriority;
+    }
+
     public function setWidth($width): self
     {
         $this->width = $width;
@@ -196,6 +221,7 @@ class Image
             sprintf('alt="%s"', $this->getAlt()),
             sprintf('loading="%s"', $this->getLoading()),
             sprintf('decoding="%s"', $this->getDecoding()),
+            sprintf('fetchpriority="%s"', $this->getFetchpriority()),
         ];
 
         if ($this->getwidth()) {
