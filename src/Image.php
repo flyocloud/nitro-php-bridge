@@ -2,6 +2,8 @@
 
 namespace Flyo\Bridge;
 
+use InvalidArgumentException;
+
 /**
  * The main intent for the image class is that if you define width and height, the image will be
  * automatically resized to the given dimensions trough the flyo storage service but also define
@@ -39,10 +41,16 @@ class Image
     ) {
     }
 
-    public static function fromObject(object $image, int $width, int $height, ?string $alt = null): self
+    public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
+    {
+
+        return (new self($src, $alt, $width, $height, $format, $loading, $decoding))->toAttributes();
+    }
+
+    public static function fromObject(object $image, int $width, int $height, ?string $alt = null, string $format = 'webp', string $loading = 'lazy', string $decoding = 'async'): self
     {
         if (!property_exists($image, 'source') || empty($image->source)) {
-            throw new \InvalidArgumentException('Image object must have a non-empty "source" property.');
+            throw new InvalidArgumentException('Image object must have a non-empty "source" property.');
         }
 
         return new self(
@@ -53,35 +61,10 @@ class Image
         );
     }
 
-    public static function attributes(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async'): string
+    public static function source(string $src, $width = null, $height = null, $format = 'webp'): string
     {
-
-        return (new self($src, $alt, $width, $height, $format, $loading, $decoding))->toAttributes();
-    }
-
-    public function toAttributes(): string
-    {
-        $attributes = [
-            sprintf('src="%s"', $this->getSrc()),
-            sprintf('alt="%s"', $this->getAlt()),
-            sprintf('loading="%s"', $this->getLoading()),
-            sprintf('decoding="%s"', $this->getDecoding()),
-        ];
-
-        if ($this->getwidth()) {
-            $attributes[] = sprintf('width="%s"', $this->getwidth());
-        }
-
-        if ($this->getHeight()) {
-            $attributes[] = sprintf('height="%s"', $this->getHeight());
-        }
-
-        if ($this->src instanceof Responsive) {
-            $attributes[] = sprintf('srcset="%s"', $this->src->getSrcset($this));
-            $attributes[] = sprintf('sizes="%s"', $this->src->getSizes($this));
-        }
-
-        return implode(" ", $attributes);
+        $image = new self($src, '', $width, $height, $format);
+        return $image->getSrc();
     }
 
     public static function tag(string|Responsive $src, $alt, $width = null, $height = null, $format = 'webp', $loading = 'lazy', $decoding = 'async', array $options = []): string
@@ -95,81 +78,9 @@ class Image
         return sprintf('<img %s />', $attributes);
     }
 
-    public function toTag(array $options = []): string
-    {
-        $attributes = $this->toAttributes();
-
-        foreach ($options as $key => $value) {
-            $attributes .= sprintf(' %s="%s"', $key, $value);
-        }
-
-        return sprintf('<img %s />', $attributes);
-    }
-
-    public static function source(string $src, $width = null, $height = null, $format = 'webp'): string
-    {
-        $image = new Image($src, '', $width, $height, $format);
-        return $image->getSrc();
-    }
-
-    /**
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/loading
-     */
-    public function getLoading(): string
-    {
-        return strtolower($this->loading) === 'lazy' ? 'lazy' : 'eager';
-    }
-
-    /**
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding#sync
-     */
-    public function getDecoding(): string
-    {
-        $decoding = strtolower($this->decoding);
-
-        if (!in_array($decoding, ['async', 'auto', 'sync'])) {
-            $decoding = 'auto';
-        }
-
-        return $decoding;
-    }
-
-    public function getFormat(): string
-    {
-        $format = strtolower($this->format);
-
-        if (!in_array($format, ['webp', 'png', 'jpg', 'jpeg', 'gif'])) {
-            $format = 'webp';
-        }
-
-        return $format;
-    }
-
     public function getAlt(): string
     {
         return htmlspecialchars($this->alt, ENT_QUOTES);
-    }
-
-    public function getWidth(): ?int
-    {
-        return empty($this->width) ? null : (int) $this->width;
-    }
-
-    public function getHeight(): ?int
-    {
-        return empty($this->height) ? null : (int) $this->height;
-    }
-
-    public function setWidth($width): self
-    {
-        $this->width = $width;
-        return $this;
-    }
-
-    public function setHeight($height): self
-    {
-        $this->height = $height;
-        return $this;
     }
 
     public function getSrc(): string
@@ -202,6 +113,115 @@ class Image
             return $url;
         }
 
-        return $url . "?format=" . $this->getFormat();
+        return $url . '?format=' . $this->getFormat();
+    }
+
+    public function setDecoding(string $decoding): self
+    {
+        $this->decoding = $decoding;
+        return $this;
+    }
+
+    /**
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding#sync
+     */
+    public function getDecoding(): string
+    {
+        $decoding = strtolower($this->decoding);
+
+        if (!in_array($decoding, ['async', 'auto', 'sync'])) {
+            $decoding = 'auto';
+        }
+
+        return $decoding;
+    }
+
+    public function setFormat(string $format): self
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+    public function getFormat(): string
+    {
+        $format = strtolower($this->format);
+
+        if (!in_array($format, ['webp', 'png', 'jpg', 'jpeg', 'gif'])) {
+            $format = 'webp';
+        }
+
+        return $format;
+    }
+
+    public function setHeight($height): self
+    {
+        $this->height = $height;
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return empty($this->height) ? null : (int) $this->height;
+    }
+
+    public function setLoading(string $loading): self
+    {
+        $this->loading = $loading;
+        return $this;
+    }
+
+    /**
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/loading
+     */
+    public function getLoading(): string
+    {
+        return strtolower($this->loading) === 'lazy' ? 'lazy' : 'eager';
+    }
+
+    public function setWidth($width): self
+    {
+        $this->width = $width;
+        return $this;
+    }
+
+    public function getWidth(): ?int
+    {
+        return empty($this->width) ? null : (int) $this->width;
+    }
+
+    public function toAttributes(): string
+    {
+        $attributes = [
+            sprintf('src="%s"', $this->getSrc()),
+            sprintf('alt="%s"', $this->getAlt()),
+            sprintf('loading="%s"', $this->getLoading()),
+            sprintf('decoding="%s"', $this->getDecoding()),
+        ];
+
+        if ($this->getwidth()) {
+            $attributes[] = sprintf('width="%s"', $this->getwidth());
+        }
+
+        if ($this->getHeight()) {
+            $attributes[] = sprintf('height="%s"', $this->getHeight());
+        }
+
+        if ($this->src instanceof Responsive) {
+            $attributes[] = sprintf('srcset="%s"', $this->src->getSrcset($this));
+            $attributes[] = sprintf('sizes="%s"', $this->src->getSizes($this));
+        }
+
+        return implode(' ', $attributes);
+    }
+
+    public function toTag(array $options = []): string
+    {
+        $attributes = $this->toAttributes();
+
+        foreach ($options as $key => $value) {
+            $attributes .= sprintf(' %s="%s"', $key, $value);
+        }
+
+        return sprintf('<img %s />', $attributes);
     }
 }
