@@ -35,6 +35,26 @@ class Responsive
         return $this;
     }
 
+    public function getSizes(Image $image): string
+    {
+        $maxSize = $image->getWidth();
+        foreach ($this->_srcset as $src) {
+            if ($src[2] > $maxSize) {
+                $maxSize = $src[2];
+            }
+        }
+
+        $sizes = [];
+        foreach ($this->_srcset as $src) {
+            /** @var BreakpointType $type */
+            $type = $src[1];
+            $sizes[] = $type->size($src[0], $maxSize);
+        }
+
+        $sizes[] = '100vw';
+        return implode(', ', $sizes);
+    }
+
     public function getSrcset(Image $image): string
     {
         $img = clone $image;
@@ -56,26 +76,6 @@ class Responsive
             $srcset[] = $fallback;
         }
 
-        return implode(", ", $srcset);
-    }
-
-    public function getSizes(Image $image): string
-    {
-        $maxSize = $image->getWidth();
-        foreach ($this->_srcset as $src) {
-            if ($src[2] > $maxSize) {
-                $maxSize = $src[2];
-            }
-        }
-
-        $sizes = [];
-        foreach ($this->_srcset as $src) {
-            /** @var BreakpointType $type */
-            $type = $src[1];
-            $sizes[] = $type->size($src[0], $maxSize);
-        }
-
-        $sizes[] = '100vw';
-        return implode(", ", $sizes);
+        return implode(', ', $srcset);
     }
 }
