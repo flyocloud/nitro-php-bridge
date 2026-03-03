@@ -33,9 +33,9 @@ class Wysiwyg extends Parser
      * @param callable|null $parser
      * @return string
      */
-    public static function render(mixed $json, ?callable $parser = null): string
+    public static function render(mixed $json, ?callable $parser = null, bool $renderUnknownNodes = true): string
     {
-        $object = new self();
+        $object = new self($renderUnknownNodes);
 
         $object->replaceNode(NodeType::image, function (Node $node) {
             $src = $node->getAttr('src');
