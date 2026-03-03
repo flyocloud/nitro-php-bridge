@@ -2,8 +2,6 @@
 
 namespace Flyo\Bridge;
 
-use Nadar\ProseMirror\Mark;
-use Nadar\ProseMirror\MarkType;
 use Nadar\ProseMirror\Node;
 use Nadar\ProseMirror\NodeType;
 use Nadar\ProseMirror\Parser;
